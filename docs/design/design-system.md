@@ -1,0 +1,8 @@
+# Folio visual specification
+Built-in Image Gen concept: concept.png. Brief: complete stock portfolio dashboard; white main canvas, cool gray left navigation, navy Inter-style typography, indigo #6255df, green/red returns. Overview, Holdings, Watchlist, Trade journal, Settings. Simulated/Actual switch; price provenance strip; four metrics; 68/32 performance and allocation; full-width holdings table; local persistence footer. All UI is native React/CSS; no sliced bitmap controls.
+
+Tokens: canvas #ffffff, sidebar #f6f7fb, text #161a38, secondary #7b8299, border #e7e9f2, accent #6255df, accent wash #f0edff, gain #16815b, loss #d75e6e; radius 10px; spacing 4/8/12/16/24/32. Sidebar 224px, main gutter 32px. Title 30px/650, metric 29px/650, section 17px/600, body 14px, table 12px; controls inherit typography. Lucide 18px outlined icons, 1.7px strokes.
+
+Native responsive extension: compact navigation on mobile, two-column metrics, charts stacked, horizontally scrollable table. Forms in accessible dialog with same border/radius/control family. All new screens extend the existing header/section/table system. Intentional content deviations: use computed coherent sample figures instead of mockup figures; clearly label illustrative history; add quote source/date and position detail to satisfy accuracy requirements; CAD totals separate from USD; no fabricated live/history claims.
+
+Expanded scope: member selector in the top bar, named watchlist tabs, ten time ranges, automatic-refresh status and rich-text notes reuse the same control and card family. Position details include a full-width stock-history chart. Recorded portfolio history has an honest first-snapshot empty state after real prices replace illustrative data.
