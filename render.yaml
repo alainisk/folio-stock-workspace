@@ -3,9 +3,6 @@ services:
     name: folio-stock-workspace
     env: node
     plan: free
-    buildCommand: npm run build
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /api/status
-    envVars:
-      - key: NODE_ENV
-        value: production
