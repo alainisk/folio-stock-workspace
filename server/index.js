@@ -53,6 +53,6 @@ if (process.env.NODE_ENV === "production") {
   app.use(vite.middlewares);
 }
 const port = Number(process.env.PORT) || 5173;
-app.listen(port, "127.0.0.1", () =>
+app.listen(port, "0.0.0.0", () =>
   console.log(`Folio is ready at http://localhost:${port}`),
 );
