@@ -1,8 +1,13 @@
+import { localWorkspaceFixture } from "./local-workspace-fixture.mjs";
 import { createMembers } from "../src/lib/workspaces.js";
 import { chromium, expect } from "@playwright/test";
 import { initialState } from "../src/lib/seed.js";
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({
+  headless: true,
+  channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
+});
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+await localWorkspaceFixture(page);
 const starting = createMembers();
 starting.members[0].workspace.autoRefresh = false;
 await page.addInitScript((d) => {
@@ -13,7 +18,7 @@ const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
 const button = (name) => page.getByRole("button", { name, exact: true });
 const metrics = () => page.locator(".metrics").innerText();
-await page.goto("http://localhost:5173");
+await page.goto(process.env.FOLIO_QA_URL || "http://localhost:5173");
 await expect(button("1D")).toBeVisible();
 await button("1D").click();
 await expect(button("1D")).toHaveAttribute("aria-pressed", "true");

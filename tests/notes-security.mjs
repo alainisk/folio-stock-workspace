@@ -1,7 +1,11 @@
+import { localWorkspaceFixture } from "./local-workspace-fixture.mjs";
 import { chromium, expect } from "@playwright/test";
 import { createMembers } from "../src/lib/workspaces.js";
-const b = await chromium.launch();
+const b = await chromium.launch({
+  channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
+});
 const p = await b.newPage();
+await localWorkspaceFixture(p);
 const seed = createMembers();
 seed.members[0].workspace.autoRefresh = false;
 seed.members[0].workspace.stockNotes["simulated:USD:NASDAQ:AAPL"] =
@@ -10,7 +14,7 @@ await p.addInitScript(
   (d) => localStorage.setItem("folio.members.v2", JSON.stringify(d)),
   seed,
 );
-await p.goto("http://localhost:5173");
+await p.goto(process.env.FOLIO_QA_URL || "http://localhost:5173");
 await p
   .getByRole("button", { name: "View AAPL NASDAQ details", exact: true })
   .click();

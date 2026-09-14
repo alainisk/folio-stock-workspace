@@ -1,11 +1,16 @@
+import { localWorkspaceFixture } from "./local-workspace-fixture.mjs";
 import { chromium } from "@playwright/test";
 import fs from "node:fs";
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({
+  headless: true,
+  channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
+});
 const page = await browser.newPage({
   viewport: { width: 1536, height: 1024 },
   deviceScaleFactor: 1,
 });
-await page.goto("http://localhost:5173");
+await localWorkspaceFixture(page);
+await page.goto(process.env.FOLIO_QA_URL || "http://localhost:5173");
 await page
   .getByRole("button", { name: "View NVDA NASDAQ details", exact: true })
   .waitFor();

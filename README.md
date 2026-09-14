@@ -1,8 +1,8 @@
 # Folio — Stock workspace
 
-A local stock simulation and investment tracker. React + Vite frontend, Express quote proxy, browser-local data. It records transactions; it does not place brokerage orders.
+A stock simulation and investment tracker. React + Vite frontend, Express quote proxy on Railway, Firebase Authentication and Firestore for private account data. It records transactions; it does not place brokerage orders.
 
-Live app: [Folio Stocks](https://folio-stock-workspace-production.up.railway.app)
+Live app: [Folio Stocks](https://folio-stock.up.railway.app)
 
 ## Start
 
@@ -10,10 +10,12 @@ Requires Node.js 20.19+ (or 22.12+).
 
 ```sh
 npm install
+cp .env.example .env
+# Fill FIREBASE_CONFIG with your Firebase web app configuration.
 npm run dev
 ```
 
-Open http://localhost:5173. Keep the terminal running. Use the same browser and address each time: localStorage is origin-specific. `localhost` and `127.0.0.1` have separate workspaces.
+Open http://localhost:5173. Keep the terminal running. Sign in with the same email and password on each device to access the same workspace.
 
 For the production build:
 
@@ -38,7 +40,19 @@ The server already listens on `0.0.0.0` and Railway's `PORT`; no port override i
 
 `railway.toml` contains the same build, start and health-check settings for services that support legacy config-as-code. For new services, set the values above in Railway; see [Railway's configuration reference](https://docs.railway.com/config-as-code/reference).
 
-When moving to a new domain, export a JSON backup from the old app and restore it at the new address. Browser-local portfolios do not transfer between domains automatically.
+Set the `FIREBASE_CONFIG` Railway variable to the Firebase web app configuration JSON. The server exposes only public client configuration; no Firebase admin credentials are needed.
+
+## Accounts, sync and themes
+
+- Email/password sign-in, account creation and password-reset emails use Firebase Authentication.
+- Firestore stores each account under `folioWorkspaces/{uid}`. Rules restrict reads and writes to that account. `firestore.rules` is the source of truth; deploy with `firebase deploy --only firestore:rules --project folio-stocks`.
+- Existing members, portfolios, watchlists, notes, balances, transactions and quote history sync through an atomic, versioned workspace save. Independent edits merge; conflicting edits require an explicit choice and offer a download before loading the cloud version.
+- A live listener receives changes from other devices. Pending saves retry on reconnect; pending drafts are kept under an account-specific browser key. A warning appears if a recovery copy cannot be saved. Completed saves remove that recovery copy. Keep the app open until it shows **Synced** before closing or signing out. Opening the cloud workspace requires an internet connection.
+- On first sign-in, choose **Import this browser’s data** to copy existing local records into an empty cloud account, or start empty. Old browser data is retained. Backups can still be restored in Settings. For data at an older domain, export there and restore here.
+- Workspaces have a 6 MB serialized sync limit. Oversized changes remain available for export and show a sync error.
+- Use the sun/moon control in the header to switch light and dark modes. The initial theme follows the device; an explicit choice is remembered on that device.
+
+The Firebase project is `folio-stocks`, using the default Firestore database in Toronto (`northamerica-northeast2`). Hosting remains on Railway.
 
 ## Included
 
@@ -51,7 +65,7 @@ When moving to a new domain, export a JSON backup from the old app and restore i
 - Purchases, lot-specific partial/full sales, dividends and a searchable trade journal. Remove an incorrect transaction in the journal and re-enter it; a purchase cannot be removed while linked sales exist.
 - Portfolio snapshots and stock price charts with 1D, 1W, 1M, 3M, 6M, 1Y, 3Y, 5Y, 10Y and ALL filters. Stock charts use available provider history.
 - Multiple named watchlists with the same stock details, charts, search, sorting, notes and price updates as holdings. Optional reference shares and price show hypothetical returns without creating purchases.
-- Separate local member profiles, each with their own portfolios, watchlists, notes, settings and backups. These are device profiles, not authenticated private accounts.
+- Separate member profiles inside each signed-in account, each with their own portfolios, watchlists, notes, settings and backups.
 - Rich-text stock notes with headings, bold, italic, lists and clickable links. Notes are shared across holdings and watchlists for the same member, portfolio, currency and exchange listing; imported HTML is sanitized.
 - Manual quote updates with dates, previous close, provenance and validation. Selected symbols only: unselected quotes retain timestamps.
 - CSV export and validated JSON backup/restore. CSV position totals repeat per purchase lot and are labeled as position totals; do not sum those repeated columns.
@@ -79,9 +93,11 @@ Polling does not run after the app/browser or local server is closed. This app d
 - Daily date follows the quote timestamp in the selected exchange's time zone. An old quote is not labeled live; mixed-session quote dates suppress portfolio daily totals. Quotes dated before subsequent transactions are not used to value remaining holdings.
 - Charts show recorded portfolio **market value**, not investment return: purchases and sales change the chart. 1D is the last 24 hours of recorded snapshots, not a downloaded intraday history. Fewer than two points shows an explanatory empty state. The sample chart is explicitly illustrative and is removed when web updates first establish recorded values. Actual portfolio history is never generated. Stock-detail charts separately display available historical stock prices; they are not portfolio returns.
 
-Splits, transfers, broker corrections and taxes are not automated. Alerts are checked on-screen when prices are updated; no background or push notifications. Data is saved in the current browser, not a cloud account. Download backups before clearing browser data or restoring a different workspace.
+Splits, transfers, broker corrections and taxes are not automated. Alerts are checked on-screen when prices are updated; no background or push notifications. Data is saved to your Firebase account. Download a backup before restoring a different workspace.
 
 ## Verify
+
+`npm test` checks data logic. `FOLIO_QA_URL=http://localhost:5173 npm run test:sync` verifies Firebase account isolation, local import, desktop/mobile sync, offline recovery and both themes using disposable accounts that it removes afterward.
 
 ```sh
 npm test

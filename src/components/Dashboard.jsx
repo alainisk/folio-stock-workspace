@@ -133,20 +133,22 @@ export function Charts({ state, portfolio, currency, metrics: m }) {
                   }
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#8b90a5" }}
+                  tick={{ fontSize: 11, fill: "var(--muted)" }}
                   dy={8}
                 />
                 <YAxis
                   domain={["auto", "auto"]}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#8b90a5" }}
+                  tick={{ fontSize: 11, fill: "var(--muted)" }}
                   tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
                   width={58}
                 />
                 <Tooltip
                   contentStyle={{
-                    border: "1px solid #e7e9f2",
+                    border: "1px solid var(--border)",
+                    background: "var(--theme-surface, #fff)",
+                    color: "var(--theme-text, #161a38)",
                     borderRadius: 10,
                     fontSize: 12,
                   }}

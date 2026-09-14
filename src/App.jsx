@@ -1,4 +1,5 @@
 import useAutoRefresh from "./hooks/useAutoRefresh";
+import ThemeToggle from "./components/ThemeToggle";
 import { upgradeWorkspace } from "./lib/workspaces";
 import { watchPositions } from "./lib/watchlists";
 import Watchlists from "./components/Watchlists";
@@ -54,6 +55,9 @@ export default function App({
   saveError,
   member,
   memberControls,
+  accountControls,
+  isCloud = false,
+  syncStatus,
 }) {
   const [page, setPage] = useState("Overview"),
     [portfolio, setPortfolio] = useState("simulated"),
@@ -263,7 +267,7 @@ export default function App({
             <Monitor size={18} />
           </div>
           <div>
-            <strong>Local workspace</strong>
+            <strong>{isCloud ? "Cloud workspace" : "Local workspace"}</strong>
             <span>{member.name}’s workspace</span>
           </div>
           <ChevronRight size={15} />
@@ -291,6 +295,7 @@ export default function App({
             <strong>{page}</strong>
           </div>
           <div className="topbar-right">
+            <ThemeToggle />
             {memberControls}
             <select
               aria-label="Portfolio currency"
@@ -306,6 +311,7 @@ export default function App({
             </span>
           </div>
         </header>
+        {accountControls}
         <div className="page-content">
           <div className="page-heading">
             <div>
@@ -549,6 +555,7 @@ export default function App({
               provider={provider}
               onChange={change}
               memberName={member.name}
+              isCloud={isCloud}
               onRestore={(s) =>
                 setModal({
                   type: "confirm",
@@ -598,7 +605,11 @@ export default function App({
               <span className={`saved-dot ${saveError ? "failed" : ""}`}>
                 <Check size={10} />
               </span>
-              {saveError ? "Changes not saved" : "Saved on this device"}
+              {isCloud
+                ? syncStatus
+                : saveError
+                  ? "Changes not saved"
+                  : "Saved on this device"}
             </span>
             <span>
               Folio · Your personal stock workspace

@@ -7,6 +7,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           charts: ["recharts"],
+          "firebase-auth": ["firebase/app", "firebase/auth"],
+          "firebase-data": ["firebase/firestore"],
           editor: [
             "@tiptap/react",
             "@tiptap/starter-kit",

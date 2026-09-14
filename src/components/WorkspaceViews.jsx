@@ -152,6 +152,7 @@ export function Settings({
   onClear,
   onRestore,
   memberName,
+  isCloud = false,
 }) {
   const [usd, setUsd] = useState(state.budgets.USD),
     [cad, setCad] = useState(state.budgets.CAD),
@@ -176,9 +177,9 @@ export function Settings({
         <ShieldCheck className="section-icon" />
         <h2>{memberName}’s workspace</h2>
         <p>
-          This member’s portfolios, watchlists and notes are saved in this
-          browser on this device. Download a backup to keep a separate copy or
-          move your workspace to another browser.
+          {isCloud
+            ? "This member’s portfolios, watchlists and notes sync to your account. Sign in with the same email on any device to see them. Download a backup to keep an extra copy."
+            : "This member’s portfolios, watchlists and notes are saved in this browser on this device. Download a backup to keep a separate copy or move your workspace to another browser."}
         </p>
         <div className="inline wrap">
           <button

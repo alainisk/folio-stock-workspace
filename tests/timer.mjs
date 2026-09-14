@@ -1,7 +1,11 @@
+import { localWorkspaceFixture } from "./local-workspace-fixture.mjs";
 import { chromium, expect } from "@playwright/test";
 import { createMembers } from "../src/lib/workspaces.js";
-const b = await chromium.launch();
+const b = await chromium.launch({
+  channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
+});
 const p = await b.newPage();
+await localWorkspaceFixture(p);
 const start = new Date();
 await p.clock.install({ time: start });
 const data = createMembers();
@@ -24,7 +28,7 @@ await p.route("**/api/quote?**", async (r) => {
     },
   });
 });
-await p.goto("http://localhost:5173");
+await p.goto(process.env.FOLIO_QA_URL || "http://localhost:5173");
 await p
   .getByRole("heading", { name: "Your portfolio, at a glance." })
   .waitFor();

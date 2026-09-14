@@ -31,9 +31,9 @@ function readMembers() {
     };
   }
 }
-export default function MemberWorkspace() {
+export default function MemberWorkspace({ cloud, accountControls }) {
   const [loaded] = useState(readMembers),
-    [data, setData] = useState(loaded.data),
+    [localData, setLocalData] = useState(loaded.data),
     [error, setError] = useState(loaded.error),
     [blocked, setBlocked] = useState(!!loaded.error),
     [manage, setManage] = useState(false),
@@ -41,6 +41,8 @@ export default function MemberWorkspace() {
     [rename, setRename] = useState(""),
     [formError, setFormError] = useState(""),
     [restore, setRestore] = useState(null);
+  const data = cloud ? cloud.data : localData;
+  const setData = cloud ? cloud.setData : setLocalData;
   const file = useRef();
   const member = data.members.find((m) => m.id === data.activeMemberId);
   const setWorkspace = useCallback(
@@ -57,10 +59,10 @@ export default function MemberWorkspace() {
             : m,
         ),
       })),
-    [data.activeMemberId],
+    [data.activeMemberId, setData],
   );
   useEffect(() => {
-    if (blocked) return;
+    if (cloud || blocked) return;
     try {
       localStorage.setItem(MEMBERS_STORE, JSON.stringify(data));
       setError("");
@@ -69,7 +71,7 @@ export default function MemberWorkspace() {
         "Changes could not be saved on this device. Download an all-members backup before closing.",
       );
     }
-  }, [data, blocked]);
+  }, [data, blocked, cloud]);
   function add(e) {
     e.preventDefault();
     const name = newName.trim();
@@ -132,14 +134,21 @@ export default function MemberWorkspace() {
         key={member.id}
         state={member.workspace}
         setState={setWorkspace}
-        saveError={error}
+        saveError={cloud ? cloud.error : error}
+        accountControls={accountControls}
+        isCloud={!!cloud}
+        syncStatus={cloud?.status}
         member={member}
         memberControls={controls}
       />
       {manage && (
         <Modal
           title="Members"
-          subtitle="Separate local profiles · each member has their own complete workspace"
+          subtitle={
+            cloud
+              ? "Profiles in your account · synced across your devices"
+              : "Separate local profiles · each member has their own complete workspace"
+          }
           onClose={() => setManage(false)}
         >
           <div className="form-body">
@@ -231,9 +240,9 @@ export default function MemberWorkspace() {
               />
             </div>
             <p className="caption">
-              Local profiles keep portfolios, watchlists, notes and settings
-              separate. Anyone using this browser can switch profiles; these are
-              not private sign-in accounts.
+              {cloud
+                ? "These profiles belong to your signed-in account. Each keeps separate portfolios, watchlists, notes and settings, synced across your devices."
+                : "Local profiles keep portfolios, watchlists, notes and settings separate. Anyone using this browser can switch profiles; these are not private sign-in accounts."}
             </p>
             {formError && (
               <p role="alert" className="form-error">

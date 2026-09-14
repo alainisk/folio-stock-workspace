@@ -5,6 +5,26 @@ import { fileURLToPath } from "node:url";
 import { chart } from "./market-data.js";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const app = express();
+app.get("/api/firebase-config", (_req, res) => {
+  // Firebase web config is public; authorization is enforced by Firebase Auth and rules.
+  try {
+    const config = JSON.parse(process.env.FIREBASE_CONFIG || "{}");
+    if (!config.apiKey || !config.projectId || !config.appId)
+      return res
+        .status(503)
+        .json({ error: "Cloud sign-in is not configured." });
+    res
+      .set("Cache-Control", "no-store")
+      .json({
+        apiKey: config.apiKey,
+        authDomain: config.authDomain,
+        projectId: config.projectId,
+        appId: config.appId,
+      });
+  } catch {
+    res.status(503).json({ error: "Cloud sign-in is not configured." });
+  }
+});
 app.get("/api/status", (_req, res) =>
   res.json({
     provider: "Yahoo Finance",

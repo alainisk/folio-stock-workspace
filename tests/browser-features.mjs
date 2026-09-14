@@ -1,7 +1,11 @@
+import { localWorkspaceFixture } from "./local-workspace-fixture.mjs";
 import { chromium, expect } from "@playwright/test";
 import { createMembers } from "../src/lib/workspaces.js";
-const b = await chromium.launch();
+const b = await chromium.launch({
+  channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
+});
 const page = await b.newPage({ viewport: { width: 1536, height: 1024 } });
+await localWorkspaceFixture(page);
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
 const seed = createMembers();
@@ -41,7 +45,7 @@ await page.route("**/api/history?**", async (route) => {
   });
 });
 const btn = (name) => page.getByRole("button", { name, exact: true });
-await page.goto("http://localhost:5173");
+await page.goto(process.env.FOLIO_QA_URL || "http://localhost:5173");
 const periods = ["1D", "1W", "1M", "3M", "6M", "1Y", "3Y", "5Y", "10Y", "ALL"];
 for (const p of periods) await expect(btn(p)).toBeVisible();
 await btn("View AAPL NASDAQ details").click();

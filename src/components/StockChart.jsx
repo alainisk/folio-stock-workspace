@@ -112,13 +112,13 @@ export default function StockChart({ symbol, exchange, currency, updatedAt }) {
                   <stop offset="100%" stopColor="#6255df" stopOpacity={0.01} />
                 </linearGradient>
               </defs>
-              <CartesianGrid vertical={false} stroke="#f0f1f6" />
+              <CartesianGrid vertical={false} stroke="var(--border)" />
               <XAxis
                 dataKey="at"
                 minTickGap={55}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fill: "#9097ac" }}
+                tick={{ fontSize: 10, fill: "var(--muted)" }}
                 tickFormatter={(s) =>
                   range === "1D"
                     ? new Date(s).toLocaleTimeString([], {
@@ -139,11 +139,13 @@ export default function StockChart({ symbol, exchange, currency, updatedAt }) {
                 axisLine={false}
                 tickLine={false}
                 width={77}
-                tick={{ fontSize: 10, fill: "#9097ac" }}
+                tick={{ fontSize: 10, fill: "var(--muted)" }}
               />
               <Tooltip
                 contentStyle={{
-                  border: "1px solid #e7e9f2",
+                  border: "1px solid var(--border)",
+                  background: "var(--theme-surface, #fff)",
+                  color: "var(--theme-text, #161a38)",
                   borderRadius: 8,
                   fontSize: 12,
                 }}
