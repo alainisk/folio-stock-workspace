@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: folio-stock-workspace
-    env: node
-    plan: free
-    buildCommand: npm ci && npm run build
-    startCommand: npm start
-    healthCheckPath: /api/status

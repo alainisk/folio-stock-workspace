@@ -2,6 +2,8 @@
 
 A local stock simulation and investment tracker. React + Vite frontend, Express quote proxy, browser-local data. It records transactions; it does not place brokerage orders.
 
+Live app: [Folio Stocks](https://folio-stock-workspace-production.up.railway.app)
+
 ## Start
 
 Requires Node.js 20.19+ (or 22.12+).
@@ -20,30 +22,23 @@ npm run build
 npm start
 ```
 
-## Deploy on Render (Free tier)
-
-Render deploy flow:
+## Deploy on Railway
 
 1. Create a repository on GitHub (if not already).
 2. Push this project to `main`.
-3. In Render, choose **New → Web Service** and connect this repo.
-4. Keep these settings:
-   - **Environment**: `Node`
+3. In Railway, create a new project from this GitHub repository.
+4. Configure the service with these settings:
+   - **Builder**: `Railpack`
    - **Build Command**: `npm run build`
    - **Start Command**: `npm start`
    - **Health Check Path**: `/api/status`
-   - **Plan**: `Free`
-5. Render will auto-detect `render.yaml` if present and deploy with these values.
+5. Deploy, then generate a public domain in the service's networking settings.
 
-If you hit sleeping instance behavior on free tier, your app is still working; requests wake it up on demand.
-For cleaner always-on behavior without redesigning architecture, switch to **Railway Hobby** after this:
+The server already listens on `0.0.0.0` and Railway's `PORT`; no port override is needed. The frontend and quote API run in the same service.
 
-1. Open Railway and create a new project from this same GitHub repo.
-2. Select **Hobby** plan (`$5/mo`) for your service.
-3. Use the same commands:
-   - `npm run build`
-   - `npm start`
-4. Keep your port on `process.env.PORT` (already wired in `server/index.js`).
+`railway.toml` contains the same build, start and health-check settings for services that support legacy config-as-code. For new services, set the values above in Railway; see [Railway's configuration reference](https://docs.railway.com/config-as-code/reference).
+
+When moving to a new domain, export a JSON backup from the old app and restore it at the new address. Browser-local portfolios do not transfer between domains automatically.
 
 ## Included
 
