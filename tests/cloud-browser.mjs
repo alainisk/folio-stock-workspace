@@ -76,6 +76,10 @@ try {
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
   }
   await login(p, a);
+  await login(q, a);
+  await expect(
+    q.getByRole("heading", { name: "Your workspace is ready." }),
+  ).toBeVisible({ timeout: 30000 });
   await p.getByRole("button", { name: "Import this browser’s data" }).click();
   await expect(p.locator(".sync-status")).toHaveText("Synced", {
     timeout: 30000,
@@ -85,7 +89,7 @@ try {
       .length,
     seed.members[0].workspace.transactions.length,
   );
-  await login(q, a);
+
   await expect(
     q.getByRole("heading", { name: "Your portfolio, at a glance." }),
   ).toBeVisible({ timeout: 30000 });

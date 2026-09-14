@@ -57,7 +57,7 @@ export default function useCloudWorkspace(db, user) {
   }, [key]);
   const sync = useCallback(async () => {
     const m = model.current;
-    if (m.busy || m.stopped || !m.ready || !m.data || m.conflict) return;
+    if (m.busy || m.stopped || !m.ready || m.conflict) return;
     if (!navigator.onLine) {
       publish({ status: "Offline · changes saved on this device" });
       return;
