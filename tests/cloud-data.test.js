@@ -49,3 +49,54 @@ test("cloud serialization round trips unicode across chunk boundaries", () => {
   assert.deepEqual(deserializeWorkspace(chunks), data);
   assert.throws(() => deserializeWorkspace(['{"version":1}']));
 });
+test("simultaneous automatic refreshes merge without a user-edit conflict", () => {
+  const base = {
+    lastRefresh: "2026-09-13T10:00:00Z",
+    snapshots: [],
+    quotes: {
+      A: { source: "Yahoo Finance", asOf: "2026-09-13T10:00:00Z", current: 10 },
+    },
+  };
+  const local = {
+    lastRefresh: "2026-09-13T10:15:01Z",
+    snapshots: [
+      {
+        portfolio: "actual",
+        currency: "USD",
+        at: "2026-09-13T10:15:01Z",
+        value: 11,
+      },
+    ],
+    quotes: {
+      A: { source: "Yahoo Finance", asOf: "2026-09-13T10:15:00Z", current: 11 },
+    },
+  };
+  const remote = {
+    lastRefresh: "2026-09-13T10:15:02Z",
+    snapshots: [
+      {
+        portfolio: "actual",
+        currency: "USD",
+        at: "2026-09-13T10:15:02Z",
+        value: 12,
+      },
+    ],
+    quotes: {
+      A: { source: "Yahoo Finance", asOf: "2026-09-13T10:15:01Z", current: 12 },
+    },
+  };
+  const merged = mergeChanges(base, local, remote);
+  assert.equal(merged.lastRefresh, remote.lastRefresh);
+  assert.equal(merged.quotes.A.current, 12);
+  assert.equal(merged.snapshots.length, 1);
+  assert.equal(merged.snapshots[0].value, 12);
+  assert.throws(
+    () =>
+      mergeChanges(
+        { source: "Manual", current: 10 },
+        { source: "Manual", current: 11 },
+        { source: "Manual", current: 12 },
+      ),
+    SyncConflict,
+  );
+});

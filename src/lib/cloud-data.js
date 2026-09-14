@@ -33,9 +33,37 @@ export class SyncConflict extends Error {
   }
 }
 // Merge independent edits; conflicting edits to the same value require an explicit choice.
-export function mergeChanges(base, local, remote) {
+export function mergeChanges(base, local, remote, field = "") {
   if (equal(local, base)) return remote;
   if (equal(remote, base) || equal(local, remote)) return local;
+  // Refresh metadata and downloaded prices can change simultaneously on open devices.
+  if (
+    field === "lastRefresh" &&
+    [local, remote].every(
+      (v) => typeof v === "string" && Number.isFinite(Date.parse(v)),
+    )
+  )
+    return Date.parse(local) > Date.parse(remote) ? local : remote;
+  if (local?.source === "Yahoo Finance" && remote?.source === "Yahoo Finance")
+    return Date.parse(local.asOf) > Date.parse(remote.asOf) ? local : remote;
+  if (field === "snapshots" && Array.isArray(local) && Array.isArray(remote)) {
+    const snapshots = new Map();
+    const realScopes = new Set(
+      [...local, ...remote]
+        .filter((s) => !s.illustrative)
+        .map((s) => `${s.portfolio}:${s.currency}`),
+    );
+    for (const s of [...local, ...remote].sort((a, b) =>
+      a.at.localeCompare(b.at),
+    )) {
+      const scope = `${s.portfolio}:${s.currency}`;
+      if (s.illustrative && realScopes.has(scope)) continue;
+      snapshots.set(`${scope}:${s.at.slice(0, 16)}`, s);
+    }
+    return [...snapshots.values()]
+      .sort((a, b) => a.at.localeCompare(b.at))
+      .slice(-5000);
+  }
   if (
     [base, local, remote].every(
       (v) => v && !Array.isArray(v) && typeof v === "object",
@@ -47,7 +75,7 @@ export function mergeChanges(base, local, remote) {
       ...Object.keys(local),
       ...Object.keys(remote),
     ])) {
-      const v = mergeChanges(base[k], local[k], remote[k]);
+      const v = mergeChanges(base[k], local[k], remote[k], k);
       if (v !== undefined) out[k] = v;
     }
     return out;
