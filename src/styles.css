@@ -134,18 +134,6 @@ p {
   gap: 12px;
   margin: 0 12px 44px;
 }
-.brand > span:first-child {
-  width: 35px;
-  height: 38px;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 9px;
-  display: grid;
-  place-items: center;
-  font-size: 25px;
-  font-weight: 650;
-  box-shadow: 0 3px 7px #6255df20;
-}
 .brand-dot {
   color: var(--accent);
   margin-left: -12px;
@@ -182,86 +170,10 @@ p {
   border-radius: 100%;
   margin-left: auto;
 }
-.sidebar-bottom {
-  margin-top: auto;
-  border-top: 1px solid var(--border);
-  padding: 22px 7px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--theme-purple-text, #717a96);
-}
-.sidebar-bottom strong {
-  display: block;
-  color: var(--theme-purple-text, #3c4461);
-  font-size: 12px;
-  font-weight: 550;
-}
-.sidebar-bottom span {
-  font-size: 10px;
-  display: block;
-  margin-top: 4px;
-}
-.sidebar-bottom > svg {
-  margin-left: auto;
-}
-.local-icon {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--theme-line, #e2e5f0);
-  background: var(--theme-surface, white);
-  border-radius: 7px;
-}
 main {
   margin-left: 224px;
   width: calc(100% - 224px);
   min-width: 0;
-}
-.topbar {
-  height: 70px;
-  border-bottom: 1px solid var(--border);
-  margin: 0 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.breadcrumb {
-  display: flex;
-  gap: 17px;
-  align-items: center;
-  color: var(--theme-purple-text, #969bb0);
-  font-size: 12px;
-}
-.breadcrumb strong {
-  font-weight: 450;
-  color: var(--theme-purple-text, #68728d);
-}
-.slash {
-  color: var(--theme-muted-text, #b9bdca);
-}
-.topbar-right {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-.topbar select {
-  border: 0;
-  min-height: 32px;
-  color: var(--theme-purple-text, #68728d);
-  background: var(--theme-surface, #fff);
-}
-.avatar {
-  width: 31px;
-  height: 31px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--theme-purple-surface, #e9e4fc);
-  color: var(--theme-purple-text, #60569a);
-  font-size: 11px;
-  font-weight: 600;
 }
 .page-content {
   padding: 30px 32px 0;
@@ -1215,9 +1127,6 @@ code {
   .page-content {
     padding: 25px 24px 0;
   }
-  .topbar {
-    margin: 0 24px;
-  }
   .metric {
     padding: 16px 13px;
   }
@@ -1262,19 +1171,6 @@ code {
     padding-left: 10px;
     gap: 10px;
     font-size: 12px;
-  }
-  .sidebar-bottom {
-    padding-left: 0;
-    gap: 5px;
-  }
-  .sidebar-bottom strong {
-    font-size: 10px;
-  }
-  .local-icon {
-    width: 25px;
-  }
-  .sidebar-bottom > svg {
-    display: none;
   }
   main {
     margin-left: 175px;
@@ -1361,16 +1257,6 @@ code {
   main {
     margin: 0;
     width: 100%;
-  }
-  .topbar {
-    height: 61px;
-    margin: 0 18px;
-  }
-  .topbar-right {
-    gap: 10px;
-  }
-  .breadcrumb {
-    gap: 10px;
   }
   .page-content {
     padding: 24px 18px 0;
@@ -1614,9 +1500,6 @@ code {
   min-width: 0;
 }
 @media (min-width: 1001px) {
-  .topbar {
-    height: 54px;
-  }
   .page-content {
     padding-top: 22px;
   }
@@ -1999,9 +1882,6 @@ code {
   .watchlist-summary {
     flex-direction: column;
   }
-  .topbar-right {
-    gap: 9px;
-  }
   .member-controls select {
     max-width: 95px;
   }
@@ -2010,25 +1890,12 @@ code {
   }
 }
 @media (max-width: 700px) {
-  .topbar {
-    margin: 0 12px;
-  }
-  .topbar-right > .avatar {
-    display: none;
-  }
-  .topbar-right {
-    gap: 5px;
-  }
   .member-controls {
     padding: 0 2px;
   }
   .member-controls select {
     max-width: 81px;
     font-size: 10px;
-  }
-  .breadcrumb {
-    font-size: 10px;
-    gap: 6px;
   }
   .refresh-status {
     align-items: flex-start;
@@ -2253,12 +2120,6 @@ code {
   .account-email {
     max-width: 160px;
   }
-  .topbar-right {
-    gap: 7px;
-  }
-  .topbar-right > .avatar {
-    display: none;
-  }
 }
 .auth-page {
   width: 100%;
@@ -2267,18 +2128,6 @@ code {
   white-space: nowrap;
 }
 @media (max-width: 600px) {
-  .breadcrumb > span {
-    display: none;
-  }
-  .topbar {
-    gap: 10px;
-  }
-  .topbar-right {
-    min-width: 0;
-  }
-  .topbar-right > select {
-    width: 64px;
-  }
   .member-controls select {
     max-width: 85px;
   }
@@ -2286,4 +2135,214 @@ code {
 
 :root[data-theme="dark"] .text-button {
   color: var(--theme-purple-text);
+}
+
+/* Shared navigation keeps the portfolio content at the top of every page. */
+.sidebar {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  gap: 24px;
+  padding-top: 24px;
+}
+.sidebar > * {
+  flex-shrink: 0;
+}
+.sidebar .brand {
+  margin-bottom: 8px;
+}
+.brand > img {
+  width: 35px;
+  height: 35px;
+  border-radius: 9px;
+  box-shadow: 0 3px 7px #6255df20;
+}
+.sidebar-prices {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.sidebar .data-banner {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.sidebar .data-banner > div {
+  align-items: flex-start;
+  gap: 6px;
+}
+.sidebar .data-banner > div > svg {
+  display: none;
+}
+.sidebar .data-banner strong {
+  display: block;
+}
+.sidebar .banner-divider {
+  display: none;
+}
+.sidebar .data-banner button {
+  padding: 0;
+  font-size: 11px;
+}
+.sidebar .data-banner button svg {
+  display: block;
+}
+.sidebar .refresh-status {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin: 12px 0 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.sidebar .refresh-status > span {
+  display: block;
+}
+.sidebar .refresh-status i {
+  display: inline-block;
+  margin-right: 5px;
+}
+.sidebar .refresh-status .text-button {
+  margin: 0;
+  font-size: 11px;
+}
+.sidebar-account {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sidebar .member-controls {
+  width: 100%;
+  padding: 0 6px;
+}
+.sidebar .member-controls > svg {
+  display: block;
+}
+.sidebar .member-controls select {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  font-size: 12px;
+}
+.sidebar-preferences {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-preferences label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.sidebar-preferences select {
+  min-width: 0;
+  padding: 6px;
+  background: var(--theme-surface, #fff);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+}
+.sidebar .account-strip {
+  padding: 12px 0 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 9px;
+}
+.sidebar .account-email {
+  max-width: 100%;
+  font-size: 10px;
+}
+.sidebar .account-strip > :last-child {
+  margin-left: 0;
+}
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.page-heading {
+  margin-bottom: 16px;
+}
+.sidebar-close {
+  position: absolute;
+  right: 12px;
+  top: 25px;
+}
+@media (min-width: 701px) and (max-width: 1000px) {
+  .sidebar {
+    width: 210px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  main {
+    margin-left: 210px;
+    width: calc(100% - 210px);
+  }
+}
+@media (max-width: 700px) {
+  .sidebar {
+    visibility: hidden;
+    width: 260px;
+  }
+  .sidebar.mobile-open {
+    visibility: visible;
+  }
+  .sidebar .brand {
+    margin-right: 30px;
+  }
+  .page-content {
+    padding-top: 16px;
+  }
+  .page-heading {
+    gap: 12px;
+  }
+  .page-heading h1 {
+    font-size: 24px;
+  }
+  .heading-actions {
+    justify-content: flex-start;
+  }
+  .portfolio-row {
+    margin-bottom: 16px;
+  }
+}
+@media (max-height: 850px) {
+  .sidebar {
+    gap: 16px;
+    padding-top: 18px;
+    padding-bottom: 16px;
+  }
+  .sidebar .brand {
+    margin-bottom: 0;
+  }
+  .sidebar nav {
+    gap: 4px;
+  }
+  .sidebar nav button {
+    height: 40px;
+  }
+  .sidebar-prices,
+  .sidebar-account {
+    padding-top: 12px;
+  }
+  .sidebar-account {
+    gap: 8px;
+  }
+  .sidebar-close {
+    top: 18px;
+  }
 }

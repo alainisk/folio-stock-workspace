@@ -11,8 +11,6 @@ import {
   Star,
   BookOpen,
   Settings as SettingsIcon,
-  Monitor,
-  ChevronRight,
   Plus,
   Upload,
   Info,
@@ -222,28 +220,32 @@ export default function App({
   const demo = portfolio === "simulated" && currency === "USD" && state.demo;
   const manual = m.open.some((p) => p.quote?.source === "Manual"),
     sample = m.open.some((p) => p.quote?.source === "Sample");
-  const subtitle =
-    page === "Overview"
-      ? "A little perspective on every position."
-      : page === "Holdings"
-        ? "The details behind every investment."
-        : page === "Watchlist"
-          ? "Follow your ideas before you invest."
-          : page === "Trade journal"
-            ? "Your decisions, recorded. Your progress, visible."
-            : "Make this workspace your own.";
   return (
     <div className="app-shell">
-      <aside className={`sidebar ${mobile ? "mobile-open" : ""}`}>
+      <aside
+        className={`sidebar ${mobile ? "mobile-open" : ""}`}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setMobile(false);
+        }}
+      >
+        <button
+          className="icon-button sidebar-close mobile-menu"
+          aria-label="Close navigation"
+          onClick={() => setMobile(false)}
+        >
+          <X size={19} />
+        </button>
         <a
           className="brand"
           href="#"
           onClick={(e) => {
             e.preventDefault();
             setPage("Overview");
+            setMobile(false);
           }}
         >
-          <span>F</span>Folio<span className="brand-dot">.</span>
+          <img src="/apple-touch-icon.png" width="35" height="35" alt="" />
+          Folio<span className="brand-dot">.</span>
         </a>
         <nav aria-label="Main navigation">
           {nav.map(([label, Icon]) => (
@@ -262,67 +264,111 @@ export default function App({
             </button>
           ))}
         </nav>
-        <div className="sidebar-bottom">
-          <div className="local-icon">
-            <Monitor size={18} />
+        <section className="sidebar-prices" aria-label="Price updates">
+          <div className="data-banner">
+            <div>
+              <Info size={16} />
+              <span>
+                {demo ? (
+                  <>
+                    <strong>
+                      {sample ? "Sample portfolio" : "Sample purchases"}
+                    </strong>
+                    <span className="banner-divider">·</span>
+                    {sample
+                      ? "Illustrative prices, not live market data"
+                      : "Web quotes · example transactions"}
+                  </>
+                ) : (
+                  <>
+                    <strong>
+                      {sample
+                        ? "Sample prices"
+                        : manual
+                          ? "Manual prices"
+                          : "Your portfolio"}
+                    </strong>
+                    <span className="banner-divider">·</span>
+                    {m.missing
+                      ? "Add prices to calculate your returns"
+                      : sample
+                        ? "Illustrative prices, not live market data"
+                        : manual
+                          ? "Returns use your last saved quotes"
+                          : provider?.configured
+                            ? "Update prices to fetch the latest available quotes"
+                            : "Manual price updates available"}
+                  </>
+                )}
+              </span>
+            </div>
+            <button onClick={() => openPrice()}>
+              <RefreshCw size={15} />
+              Update prices
+            </button>
           </div>
-          <div>
-            <strong>{isCloud ? "Cloud workspace" : "Local workspace"}</strong>
-            <span>{member.name}’s workspace</span>
+          <div className="refresh-status">
+            <span>
+              <i className={refreshStatus.busy ? "refreshing" : ""} />
+              {refreshStatus.busy
+                ? "Updating web prices..."
+                : state.autoRefresh
+                  ? "Automatic web updates · every 15 minutes"
+                  : "Automatic updates paused"}
+              {state.lastRefresh &&
+                ` · Last checked ${new Date(state.lastRefresh).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
+            </span>
+            <button
+              className="text-button"
+              disabled={refreshStatus.busy}
+              onClick={refreshStatus.refresh}
+            >
+              <RefreshCw size={13} />
+              Refresh now
+            </button>
           </div>
-          <ChevronRight size={15} />
-        </div>
+        </section>
+        <section className="sidebar-account" aria-label="Workspace and account">
+          {memberControls}
+          <div className="sidebar-preferences">
+            <label>
+              Currency
+              <select
+                aria-label="Portfolio currency"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                {currencies.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </label>
+            <ThemeToggle />
+          </div>
+          {accountControls}
+        </section>
       </aside>
       {mobile && (
         <button
-          aria-label="Close navigation"
+          aria-label="Dismiss navigation"
+          tabIndex={-1}
           className="mobile-scrim"
           onClick={() => setMobile(false)}
         />
       )}
       <main>
-        <header className="topbar">
-          <div className="breadcrumb">
-            <button
-              className="icon-button mobile-menu"
-              aria-label="Open navigation"
-              onClick={() => setMobile(true)}
-            >
-              <Menu size={21} />
-            </button>
-            <span>Workspace</span>
-            <span className="slash">/</span>
-            <strong>{page}</strong>
-          </div>
-          <div className="topbar-right">
-            <ThemeToggle />
-            {memberControls}
-            <select
-              aria-label="Portfolio currency"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-            >
-              {currencies.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-            <span className="avatar" title={`${member.name} workspace`}>
-              {member.name.slice(0, 2).toUpperCase()}
-            </span>
-          </div>
-        </header>
-        {accountControls}
         <div className="page-content">
           <div className="page-heading">
-            <div>
-              <h1>
-                {page === "Overview"
-                  ? "Your portfolio, at a glance."
-                  : page === "Holdings"
-                    ? "Every position. In perspective."
-                    : page}
-              </h1>
-              <p>{subtitle}</p>
+            <div className="page-title">
+              <button
+                className="icon-button mobile-menu"
+                aria-label="Open navigation"
+                aria-expanded={mobile}
+                onClick={() => setMobile(true)}
+              >
+                <Menu size={21} />
+              </button>
+              <h1>{page === "Overview" ? "Your Portfolio" : page}</h1>
             </div>
             <div className="heading-actions">
               <button className="button" onClick={exportData}>
@@ -371,76 +417,10 @@ export default function App({
               </button>
             </div>
           )}
-          {page !== "Settings" && (
-            <div className="data-banner">
-              <div>
-                <Info size={16} />
-                <span>
-                  {demo ? (
-                    <>
-                      <strong>
-                        {sample ? "Sample portfolio" : "Sample purchases"}
-                      </strong>
-                      <span className="banner-divider">·</span>
-                      {sample
-                        ? "Illustrative prices, not live market data"
-                        : "Web quotes · example transactions"}
-                    </>
-                  ) : (
-                    <>
-                      <strong>
-                        {sample
-                          ? "Sample prices"
-                          : manual
-                            ? "Manual prices"
-                            : "Your portfolio"}
-                      </strong>
-                      <span className="banner-divider">·</span>
-                      {m.missing
-                        ? "Add prices to calculate your returns"
-                        : sample
-                          ? "Illustrative prices, not live market data"
-                          : manual
-                            ? "Returns use your last saved quotes"
-                            : provider?.configured
-                              ? "Update prices to fetch the latest available quotes"
-                              : "Manual price updates available"}
-                    </>
-                  )}
-                </span>
-              </div>
-              <button onClick={() => openPrice()}>
-                <RefreshCw size={15} />
-                Update prices
-              </button>
-            </div>
-          )}
           {m.mixedDays && page !== "Settings" && (
             <div className="warning-banner">
               Quotes span different trading sessions. Update all prices to the
               same session to calculate a portfolio daily return.
-            </div>
-          )}
-          {page !== "Settings" && (
-            <div className="refresh-status">
-              <span>
-                <i className={refreshStatus.busy ? "refreshing" : ""} />
-                {refreshStatus.busy
-                  ? "Updating web prices..."
-                  : state.autoRefresh
-                    ? "Automatic web updates · every 15 minutes"
-                    : "Automatic updates paused"}
-                {state.lastRefresh &&
-                  ` · Last checked ${new Date(state.lastRefresh).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
-              </span>
-              <button
-                className="text-button"
-                disabled={refreshStatus.busy}
-                onClick={refreshStatus.refresh}
-              >
-                <RefreshCw size={13} />
-                Refresh now
-              </button>
             </div>
           )}
           {refreshStatus.errors.length > 0 && (

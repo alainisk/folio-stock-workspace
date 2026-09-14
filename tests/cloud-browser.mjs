@@ -90,9 +90,9 @@ try {
     seed.members[0].workspace.transactions.length,
   );
 
-  await expect(
-    q.getByRole("heading", { name: "Your portfolio, at a glance." }),
-  ).toBeVisible({ timeout: 30000 });
+  await expect(q.getByRole("heading", { name: "Your Portfolio" })).toBeVisible({
+    timeout: 30000,
+  });
   // Desktop changes arrive on a separate mobile session.
   await p.getByRole("button", { name: "Manage members" }).click();
   await p.getByLabel("New member name").fill("Cross-device QA");
@@ -102,6 +102,7 @@ try {
     { timeout: 30000 },
   );
   // A mobile edit survives going offline, then uploads on reconnect.
+  await q.getByRole("button", { name: "Open navigation" }).click();
   await mobile.setOffline(true);
   await q.getByRole("button", { name: "Manage members" }).click();
   await q.getByLabel("Rename selected member").fill("Mobile offline edit");
@@ -130,7 +131,15 @@ try {
     p.getByRole("button", { name: "Switch to light mode" }),
   ).toBeVisible();
   await p.getByRole("button", { name: "Switch to light mode" }).click();
+  await expect(
+    p.getByRole("button", { name: "Export", exact: true }),
+  ).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await p.screenshot({ path: "/private/tmp/folio-dashboard-light.png" });
+  const closeNavigation = q.getByRole("button", {
+    name: "Close navigation",
+    exact: true,
+  });
+  if (await closeNavigation.isVisible()) await closeNavigation.click();
   await q.screenshot({ path: "/private/tmp/folio-dashboard-mobile.png" });
   assert.equal(
     await q.evaluate(() => document.documentElement.scrollWidth > innerWidth),
